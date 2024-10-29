@@ -18,9 +18,16 @@ function execute() {
             if (event.data.type === 'fields') {
                 collectedFields.push(...event.data.fields);
             }
+
+            // Send a message to child frames to collect fields
+            Array.from(window.frames).forEach((frame) => {
+              frame.postMessage({ type: 'requestFields' }, '*');
+            });
+
         });
     } else if (!isTopFrame()) {
       // Child frames sends Fields up to Top Frame.
+      window.parent.postMessage({ type: 'fields', fields }, '*');
     }
 	} catch (e) {
 		console.error(e)
