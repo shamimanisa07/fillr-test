@@ -8,13 +8,17 @@ function execute() {
 	try {
     // Step 1 Scrape Fields and Create Fields list object.
     const fields = getFieldsFromDoc(document);
-    
+
     // Step 2 Add Listener for Top Frame to Receive Fields.
+    const collectedFields = [];
+
     if (isTopFrame()) {
-      window.addEventListener('message', (event) => {
-        // - Merge fields from frames.
-        // - Process Fields and send event once all fields are collected.
-      });
+      // Listener to receive fields from child frames
+        window.addEventListener('message', (event) => {
+            if (event.data.type === 'fields') {
+                collectedFields.push(...event.data.fields);
+            }
+        });
     } else if (!isTopFrame()) {
       // Child frames sends Fields up to Top Frame.
     }
